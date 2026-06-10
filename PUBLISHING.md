@@ -77,22 +77,31 @@ git push origin v0.0.19
 
 Máy local đang chạy **Node 18** nên cần polyfill `File` cho vsce (xem `scripts/file-polyfill.js`):
 
-```bash
-# Đóng gói
-NODE_OPTIONS=--require=./scripts/file-polyfill.js npx @vscode/vsce@2.32.0 package
+PowerShell — đặt env một lần cho phiên rồi chạy:
 
-# Publish (sẽ hỏi PAT, hoặc truyền -p <PAT>)
-NODE_OPTIONS=--require=./scripts/file-polyfill.js npx @vscode/vsce@2.32.0 publish
+```powershell
+$env:NODE_OPTIONS='--require=./scripts/file-polyfill.js'
+
+# Đóng gói
+npx @vscode/vsce@2.32.0 package
+
+# Publish VS Code Marketplace (PAT đã lưu trong Windows Credential Manager
+# từ lần `vsce login shiroenguyen` — không cần nhập lại; hoặc truyền -p <PAT>)
+npx @vscode/vsce@2.32.0 publish --packagePath task-mind-<version>.vsix
+
+# Publish Open VSX (LƯU Ý: trên Node 18 phải pin ovsx@0.9.5 — bản mới hơn đòi Node 20)
+npx ovsx@0.9.5 publish task-mind-<version>.vsix -p <OVSX_TOKEN>
 ```
 
-PowerShell thì đặt env trước: `$env:NODE_OPTIONS='--require=./scripts/file-polyfill.js'`.
-Trên CI dùng Node 20 nên không cần polyfill.
+Bash thì thay dòng env bằng tiền tố `NODE_OPTIONS=--require=./scripts/file-polyfill.js` trước
+từng lệnh. Trên CI dùng Node 20 nên không cần polyfill và dùng được ovsx mới nhất.
 
 ## Sự cố thường gặp
 
 | Lỗi | Nguyên nhân / cách xử lý |
 |---|---|
 | `401 Unauthorized` khi publish | PAT sai scope (cần Marketplace→Manage) hoặc không chọn "All accessible organizations"; hoặc PAT hết hạn → tạo lại, cập nhật secret `VSCE_PAT` |
+| `vX.Y.Z already exists` khi publish | Version đó đã có trên store (vd đã publish tay trước khi push tag). Workflow đã có `--skip-duplicate` nên bỏ qua êm; gặp khi chạy tay thì coi như xong, không cần làm gì |
 | `ReferenceError: File is not defined` khi chạy vsce local | Node 18 — dùng lệnh có `NODE_OPTIONS=--require=./scripts/file-polyfill.js` như trên |
 | Tag đã push nhưng quên bump version | Xoá tag (`git tag -d vX.Y.Z && git push origin :refs/tags/vX.Y.Z`), bump version, commit, tag lại |
 | Publish trùng version | Marketplace từ chối — bump version mới, không thể ghi đè |

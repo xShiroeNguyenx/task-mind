@@ -58,8 +58,9 @@ jobs:
 
       - name: Publish lên VS Code Marketplace
         if: env.VSCE_PAT != ''
-        run: npx @vscode/vsce@2.32.0 publish --packagePath task-mind-*.vsix -p "$VSCE_PAT"
+        # --skip-duplicate: version đã có trên store (vd đã publish tay) → bỏ qua, không fail
+        run: npx @vscode/vsce@2.32.0 publish --packagePath task-mind-*.vsix -p "$VSCE_PAT" --skip-duplicate
 
       - name: Publish lên Open VSX (tuỳ chọn)
         if: env.OVSX_PAT != ''
-        run: npx ovsx@0.10.1 publish task-mind-*.vsix -p "$OVSX_PAT"
+        run: npx ovsx@0.10.1 publish task-mind-*.vsix -p "$OVSX_PAT" --skip-duplicate

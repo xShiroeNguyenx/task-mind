@@ -1,6 +1,17 @@
 # Changelog
 
-## [0.0.18] — chưa phát hành
+## [0.1.0] — 2026-06-10
+
+Bản đầu tiên phát hành chính thức lên **VS Code Marketplace** (và Open VSX). Nội dung tính năng
+như 0.0.18; bản này bổ sung hạ tầng phát hành:
+
+- **CI/CD bằng GitHub Actions**: mọi push/PR được build + lint + test + đóng gói thử
+  (`ci.yml`); push tag `vX.Y.Z` tự tạo GitHub Release kèm `.vsix` và publish lên VS Code
+  Marketplace + Open VSX (`release.yml`, có `--skip-duplicate` nếu version đã tồn tại).
+- `package.json` bổ sung metadata Marketplace (`repository`, `keywords`, `homepage`, `bugs`);
+  README thêm badge CI + hướng dẫn cài đặt; thêm `PUBLISHING.md` (quy trình phát hành).
+
+## [0.0.18] — 2026-06-10 (chỉ Marketplace)
 
 - **Thêm nút "Xuất TSV" cho báo cáo** (cạnh "Xuất Markdown") để **import/dán vào Google Sheets**.
   Bảng 5 cột `Ngày · Dự án · Task · Sub-task · Trạng thái`: mỗi task một dòng, bật "Sub-task" thì

@@ -2,7 +2,7 @@
   "name": "task-mind",
   "displayName": "Task Mind",
   "description": "Checklist tự động cho công việc giao cho AI agent (Claude Code): tự tóm tắt, gom nhóm Epic → Task → Subtask, và báo cáo theo ngày.",
-  "version": "0.0.18",
+  "version": "0.1.0",
   "publisher": "shiroenguyen",
   "license": "MIT",
   "icon": "media/icon.png",
