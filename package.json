@@ -1,0 +1,263 @@
+{
+  "name": "task-mind",
+  "displayName": "Task Mind",
+  "description": "Checklist tự động cho công việc giao cho AI agent (Claude Code): tự tóm tắt, gom nhóm Epic → Task → Subtask, và báo cáo theo ngày.",
+  "version": "0.0.18",
+  "publisher": "shiroenguyen",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "taskMind",
+          "title": "Task Mind",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "taskMind": [
+        {
+          "id": "taskMind.tasksView",
+          "name": "Checklist"
+        },
+        {
+          "id": "taskMind.settingsView",
+          "name": "Settings",
+          "type": "webview",
+          "icon": "$(gear)",
+          "visibility": "collapsed"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "taskMind.tasksView",
+        "contents": "Chưa có việc nào được ghi lại.\nKhi bạn giao việc cho AI (Claude Code), việc sẽ tự xuất hiện ở đây.\n[Tạo việc mẫu](command:taskMind.simulateTask)\n[Làm mới](command:taskMind.refresh)"
+      }
+    ],
+    "commands": [
+      { "command": "taskMind.refresh", "title": "Làm mới", "category": "Task Mind", "icon": "$(refresh)" },
+      { "command": "taskMind.toggleGrouping", "title": "Đổi cách nhóm (Dự án/Ngày)", "category": "Task Mind", "icon": "$(list-tree)" },
+      { "command": "taskMind.markDone", "title": "Đánh dấu xong", "category": "Task Mind", "icon": "$(check)" },
+      { "command": "taskMind.markUndone", "title": "Bỏ đánh dấu xong", "category": "Task Mind" },
+      { "command": "taskMind.editTitle", "title": "Sửa tiêu đề", "category": "Task Mind", "icon": "$(edit)" },
+      { "command": "taskMind.deleteTask", "title": "Xoá việc", "category": "Task Mind", "icon": "$(trash)" },
+      { "command": "taskMind.mergeTasks", "title": "Gộp việc", "category": "Task Mind" },
+      { "command": "taskMind.splitTask", "title": "Tách việc", "category": "Task Mind" },
+      { "command": "taskMind.moveToEpic", "title": "Chuyển sang Epic", "category": "Task Mind" },
+      { "command": "taskMind.createEpic", "title": "Tạo Epic", "category": "Task Mind", "icon": "$(add)" },
+      { "command": "taskMind.renameEpic", "title": "Đổi tên Epic", "category": "Task Mind", "icon": "$(edit)" },
+      { "command": "taskMind.deleteEpic", "title": "Xoá Epic", "category": "Task Mind", "icon": "$(trash)" },
+      { "command": "taskMind.promoteToEpic", "title": "Nâng thành Epic", "category": "Task Mind" },
+      { "command": "taskMind.addSubtask", "title": "Thêm subtask", "category": "Task Mind", "icon": "$(add)" },
+      { "command": "taskMind.toggleSubtask", "title": "Tick subtask", "category": "Task Mind", "icon": "$(check)" },
+      { "command": "taskMind.deleteSubtask", "title": "Xoá subtask", "category": "Task Mind", "icon": "$(trash)" },
+      { "command": "taskMind.openTask", "title": "Mở chi tiết việc", "category": "Task Mind" },
+      { "command": "taskMind.retryTask", "title": "Dựng lại task này (AI)", "category": "Task Mind", "icon": "$(sync)" },
+      { "command": "taskMind.reprocess", "title": "Dựng lại toàn bộ task", "category": "Task Mind", "icon": "$(sync)" },
+      { "command": "taskMind.aiStatus", "title": "Kiểm tra AI", "category": "Task Mind", "icon": "$(beaker)" },
+      { "command": "taskMind.deleteFailedTasks", "title": "Xoá các task không đặt được tên (⚠️)", "category": "Task Mind", "icon": "$(clear-all)" },
+      { "command": "taskMind.openReport", "title": "Mở báo cáo", "category": "Task Mind", "icon": "$(graph)" },
+      { "command": "taskMind.exportReportMarkdown", "title": "Xuất báo cáo Markdown", "category": "Task Mind" },
+      { "command": "taskMind.setApiKey", "title": "Nhập API key", "category": "Task Mind" },
+      { "command": "taskMind.openSettings", "title": "Mở cài đặt", "category": "Task Mind", "icon": "$(gear)" },
+      { "command": "taskMind.openNativeSettings", "title": "Mở cài đặt gốc (VS Code)", "category": "Task Mind" },
+      { "command": "taskMind.simulateTask", "title": "(Dev) Tạo việc mẫu", "category": "Task Mind" }
+    ],
+    "menus": {
+      "view/title": [
+        { "command": "taskMind.toggleGrouping", "when": "view == taskMind.tasksView", "group": "navigation@1" },
+        { "command": "taskMind.refresh", "when": "view == taskMind.tasksView", "group": "navigation@2" },
+        { "command": "taskMind.openReport", "when": "view == taskMind.tasksView", "group": "navigation@3" },
+        { "command": "taskMind.reprocess", "when": "view == taskMind.tasksView", "group": "1_config@1" },
+        { "command": "taskMind.deleteFailedTasks", "when": "view == taskMind.tasksView", "group": "1_config@2" },
+        { "command": "taskMind.openSettings", "when": "view == taskMind.tasksView", "group": "1_config@3" }
+      ],
+      "view/item/context": [
+        { "command": "taskMind.renameEpic", "when": "view == taskMind.tasksView && viewItem == epic", "group": "1_modify@1" },
+        { "command": "taskMind.deleteEpic", "when": "view == taskMind.tasksView && viewItem == epic", "group": "2_danger@1" },
+        { "command": "taskMind.retryTask", "when": "view == taskMind.tasksView && viewItem == taskFailed", "group": "inline@0" },
+        { "command": "taskMind.deleteTask", "when": "view == taskMind.tasksView && viewItem == taskFailed", "group": "inline@3" },
+        { "command": "taskMind.markDone", "when": "view == taskMind.tasksView && viewItem =~ /^task/", "group": "inline@1" },
+        { "command": "taskMind.editTitle", "when": "view == taskMind.tasksView && viewItem =~ /^task/", "group": "inline@2" },
+        { "command": "taskMind.openTask", "when": "view == taskMind.tasksView && viewItem =~ /^task/", "group": "0_open@1" },
+        { "command": "taskMind.retryTask", "when": "view == taskMind.tasksView && viewItem =~ /^task/", "group": "0_open@2" },
+        { "command": "taskMind.markDone", "when": "view == taskMind.tasksView && viewItem =~ /^task/", "group": "1_modify@1" },
+        { "command": "taskMind.markUndone", "when": "view == taskMind.tasksView && viewItem =~ /^task/", "group": "1_modify@2" },
+        { "command": "taskMind.addSubtask", "when": "view == taskMind.tasksView && viewItem =~ /^task/", "group": "1_modify@3" },
+        { "command": "taskMind.moveToEpic", "when": "view == taskMind.tasksView && viewItem =~ /^task/", "group": "2_hier@1" },
+        { "command": "taskMind.promoteToEpic", "when": "view == taskMind.tasksView && viewItem =~ /^task/", "group": "2_hier@2" },
+        { "command": "taskMind.mergeTasks", "when": "view == taskMind.tasksView && viewItem =~ /^task/", "group": "2_hier@3" },
+        { "command": "taskMind.splitTask", "when": "view == taskMind.tasksView && viewItem =~ /^task/", "group": "2_hier@4" },
+        { "command": "taskMind.deleteTask", "when": "view == taskMind.tasksView && viewItem =~ /^task/", "group": "3_danger@1" },
+        { "command": "taskMind.toggleSubtask", "when": "view == taskMind.tasksView && viewItem == subtask", "group": "inline@1" },
+        { "command": "taskMind.deleteSubtask", "when": "view == taskMind.tasksView && viewItem == subtask", "group": "3_danger@1" }
+      ],
+      "commandPalette": [
+        { "command": "taskMind.refresh", "when": "false" },
+        { "command": "taskMind.toggleGrouping", "when": "false" },
+        { "command": "taskMind.markDone", "when": "false" },
+        { "command": "taskMind.markUndone", "when": "false" },
+        { "command": "taskMind.editTitle", "when": "false" },
+        { "command": "taskMind.deleteTask", "when": "false" },
+        { "command": "taskMind.mergeTasks", "when": "false" },
+        { "command": "taskMind.splitTask", "when": "false" },
+        { "command": "taskMind.moveToEpic", "when": "false" },
+        { "command": "taskMind.createEpic", "when": "false" },
+        { "command": "taskMind.renameEpic", "when": "false" },
+        { "command": "taskMind.deleteEpic", "when": "false" },
+        { "command": "taskMind.promoteToEpic", "when": "false" },
+        { "command": "taskMind.addSubtask", "when": "false" },
+        { "command": "taskMind.toggleSubtask", "when": "false" },
+        { "command": "taskMind.deleteSubtask", "when": "false" },
+        { "command": "taskMind.openTask", "when": "false" },
+        { "command": "taskMind.retryTask", "when": "false" },
+        { "command": "taskMind.reprocess", "when": "false" },
+        { "command": "taskMind.aiStatus", "when": "false" },
+        { "command": "taskMind.deleteFailedTasks", "when": "false" },
+        { "command": "taskMind.openReport", "when": "false" },
+        { "command": "taskMind.exportReportMarkdown", "when": "false" },
+        { "command": "taskMind.setApiKey", "when": "false" },
+        { "command": "taskMind.openSettings", "when": "false" },
+        { "command": "taskMind.openNativeSettings", "when": "false" },
+        { "command": "taskMind.simulateTask", "when": "false" }
+      ]
+    },
+    "configuration": {
+      "title": "Task Mind",
+      "properties": {
+        "taskMind.autoCapture.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically record work delegated to AI (watches the Claude Code transcript)."
+        },
+        "taskMind.capture.idleGapMinutes": {
+          "type": "number",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 240,
+          "description": "Idle gap (minutes) between prompts to merge them into one task. Beyond this gap is treated as a new task."
+        },
+        "taskMind.capture.pollIntervalSeconds": {
+          "type": "number",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 60,
+          "description": "Transcript file polling interval (seconds)."
+        },
+        "taskMind.capture.backfillDays": {
+          "type": "number",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 90,
+          "description": "When backfilling history and when rebuilding tasks, only take turns from the last N days (1 = today only). 0 = no limit. Focused on today and forward."
+        },
+        "taskMind.ai.provider": {
+          "type": "string",
+          "enum": ["auto", "vscode-lm", "external", "heuristic"],
+          "enumDescriptions": [
+            "Auto: prefer VS Code LM → external API key → heuristic",
+            "Use VS Code Language Model API only (Copilot)",
+            "Use external API key only",
+            "Use heuristic only (offline, no AI calls)"
+          ],
+          "default": "auto",
+          "description": "AI engine used for summarizing & grouping/classification."
+        },
+        "taskMind.ai.externalProvider": {
+          "type": "string",
+          "enum": ["anthropic", "openai", "gemini"],
+          "enumDescriptions": ["Anthropic (Claude)", "OpenAI (GPT)", "Google Gemini"],
+          "default": "anthropic",
+          "description": "Provider to use when using an external API key."
+        },
+        "taskMind.ai.model": {
+          "type": "string",
+          "default": "",
+          "description": "Model name used for summarizing (leave empty = provider default)."
+        },
+        "taskMind.hierarchy.autoClassify": {
+          "type": "boolean",
+          "default": true,
+          "description": "Let AI automatically assign tasks to a matching Epic."
+        },
+        "taskMind.autoDeleteFailedTasks": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically delete 'insufficient info' tasks when AI replied normally but could not produce a title (content too thin). Does NOT delete on transient AI errors (network/429/bad key) — those keep a ⚠️ flag so you can retry."
+        },
+        "taskMind.hierarchy.subtaskSource": {
+          "type": "string",
+          "enum": ["agent-todo", "ai", "both", "off"],
+          "default": "both",
+          "description": "Source for creating Subtasks: the agent's TodoWrite, AI decomposition, both, or off."
+        },
+        "taskMind.tree.groupBy": {
+          "type": "string",
+          "enum": ["project-day", "day-project"],
+          "enumDescriptions": [
+            "Group by project, then by day within each project",
+            "Group by day, then by project within each day"
+          ],
+          "default": "project-day",
+          "description": "How to group the checklist tree (two levels)."
+        },
+        "taskMind.report.time": {
+          "type": "string",
+          "default": "18:00",
+          "pattern": "^\\d{1,2}:\\d{2}$",
+          "description": "Time to generate the daily report (HH:MM, local time)."
+        },
+        "taskMind.report.autoGenerate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically generate the report at the configured time."
+        },
+        "taskMind.language": {
+          "type": "string",
+          "enum": ["vi", "en"],
+          "enumDescriptions": ["Tiếng Việt", "English"],
+          "default": "vi",
+          "description": "Interface language."
+        },
+        "taskMind.scope": {
+          "type": "string",
+          "enum": ["global", "workspace"],
+          "default": "global",
+          "description": "global = combine all projects; workspace = show the current project only."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "pretest": "npm run compile",
+    "test": "node ./scripts/smoke-test.js && node ./scripts/dev-projection-test.js && node ./scripts/dev-reprocess-test.js",
+    "package": "vsce package --allow-missing-repository",
+    "publish:vsce": "vsce publish",
+    "publish:ovsx": "ovsx publish"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.0"
+  }
+}

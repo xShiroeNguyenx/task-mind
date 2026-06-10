@@ -1,0 +1,16 @@
+.vscode/**
+.vscode-test/**
+src/**
+scripts/**
+node_modules/**
+.gitignore
+.eslintrc.cjs
+tsconfig.json
+**/*.map
+**/*.ts
+.tmp-test-storage/**
+PLAN.md
+media/Mind.png
+task-mind-report-*.md
+task-mind-report-*.tsv
+*.vsix
