@@ -1,0 +1,42 @@
+# CI: chạy trên mọi push lên main và mọi pull request.
+# Biên dịch + lint + test, sau đó đóng gói thử .vsix và đính kèm làm artifact
+# (tải về cài tay được, không publish gì cả).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile
+        run: npm run compile
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Package .vsix (kiểm tra đóng gói được)
+        run: npx @vscode/vsce@2.32.0 package
+
+      - name: Upload .vsix artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: task-mind-vsix
+          path: '*.vsix'
+          retention-days: 14

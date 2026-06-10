@@ -6,6 +6,24 @@
   "publisher": "shiroenguyen",
   "license": "MIT",
   "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xShiroeNguyenx/task-mind.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xShiroeNguyenx/task-mind/issues"
+  },
+  "homepage": "https://github.com/xShiroeNguyenx/task-mind#readme",
+  "keywords": [
+    "claude",
+    "claude-code",
+    "ai",
+    "agent",
+    "task",
+    "checklist",
+    "todo",
+    "report"
+  ],
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -248,7 +266,7 @@
     "lint": "eslint src --ext ts",
     "pretest": "npm run compile",
     "test": "node ./scripts/smoke-test.js && node ./scripts/dev-projection-test.js && node ./scripts/dev-reprocess-test.js",
-    "package": "vsce package --allow-missing-repository",
+    "package": "vsce package",
     "publish:vsce": "vsce publish",
     "publish:ovsx": "ovsx publish"
   },

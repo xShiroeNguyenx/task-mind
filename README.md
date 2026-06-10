@@ -1,8 +1,16 @@
 # Task Mind
 
+[![CI](https://github.com/xShiroeNguyenx/task-mind/actions/workflows/ci.yml/badge.svg)](https://github.com/xShiroeNguyenx/task-mind/actions/workflows/ci.yml)
+
 Extension VS Code tự động ghi lại **việc bạn giao cho AI agent (Claude Code)** thành một
 checklist phân cấp `Epic → Task → Subtask`, tự tóm tắt, gom nhóm và tổng kết **báo cáo theo
 ngày** — giống Jira nhưng **sinh từ chat**.
+
+## Cài đặt
+
+- **VS Code Marketplace**: tìm "Task Mind" trong tab Extensions (sau khi extension được publish).
+- **Từ file `.vsix`**: tải từ [Releases](https://github.com/xShiroeNguyenx/task-mind/releases),
+  rồi trong VS Code: Extensions → menu `…` → **Install from VSIX…**
 
 ## Tính năng
 
@@ -51,6 +59,10 @@ npm run watch      # biên dịch TypeScript theo dõi thay đổi
 # Nhấn F5 trong VS Code để chạy Extension Development Host
 npm test           # smoke test (mock vscode)
 ```
+
+CI/CD chạy bằng GitHub Actions: mọi push/PR được build + test ([ci.yml](.github/workflows/ci.yml));
+push tag `vX.Y.Z` sẽ tạo GitHub Release kèm `.vsix` và publish lên Marketplace
+([release.yml](.github/workflows/release.yml)). Chi tiết quy trình phát hành: [PUBLISHING.md](PUBLISHING.md).
 
 ## Cơ chế
 

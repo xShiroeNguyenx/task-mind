@@ -14,3 +14,5 @@ media/Mind.png
 task-mind-report-*.md
 task-mind-report-*.tsv
 *.vsix
+.github/**
+PUBLISHING.md

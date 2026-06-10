@@ -1,0 +1,65 @@
+# Release: chạy khi push tag dạng vX.Y.Z (vd: v0.0.18).
+# Build + test + đóng gói, tạo GitHub Release kèm file .vsix, rồi publish lên
+# VS Code Marketplace (cần secret VSCE_PAT) và Open VSX (tuỳ chọn, secret OVSX_PAT).
+# Thiếu secret nào thì bước publish tương ứng tự bỏ qua — release GitHub vẫn tạo.
+#
+# Quy trình phát hành đầy đủ: xem PUBLISHING.md.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write # để tạo GitHub Release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      OVSX_PAT: ${{ secrets.OVSX_PAT }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Kiểm tra tag khớp version trong package.json
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME không khớp package.json version $PKG_VERSION"
+            exit 1
+          fi
+
+      - name: Compile + Lint + Test
+        run: |
+          npm run compile
+          npm run lint
+          npm test
+
+      - name: Package .vsix
+        run: npx @vscode/vsce@2.32.0 package
+
+      - name: Tạo GitHub Release kèm .vsix
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" task-mind-*.vsix \
+            --title "Task Mind $GITHUB_REF_NAME" \
+            --generate-notes
+
+      - name: Publish lên VS Code Marketplace
+        if: env.VSCE_PAT != ''
+        run: npx @vscode/vsce@2.32.0 publish --packagePath task-mind-*.vsix -p "$VSCE_PAT"
+
+      - name: Publish lên Open VSX (tuỳ chọn)
+        if: env.OVSX_PAT != ''
+        run: npx ovsx@0.10.1 publish task-mind-*.vsix -p "$OVSX_PAT"
